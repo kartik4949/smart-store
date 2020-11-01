@@ -1,0 +1,112 @@
+{% extends 'base-template.html' %}
+{% block content %}
+    <div class="container">
+{% if transaction_message%}
+<style>
+.alert {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+</style>
+<div class="alert">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+{{transaction_message}}
+</div>
+{% else %}
+        <table class="table">
+            <thead>
+                <th scope="col">Prod ID</th>
+                <th scope="col">Item Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Rate</th>
+                <th scope="col">Price</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for item in bills %}
+                    <tr>
+                        <td>{{ item[0] }}</td>
+                        <td>{{ item[1] }}</td>
+                        <td>{{ item[2] }}</td>
+                        <td>&#8377;{{ item[3] }}</td>
+                        <td>&#8377;{{ item[4] }}</td>
+                        <td>
+                            <a href="{{ url_for('delete', prod_id=item[0], type='bills') }}">
+                                <button name="button" type="button" class="btn btn-danger" value= "delete" >delete</button><br>
+                            </a>
+                        </td>
+                        <td>
+                            <button name="button" type="button" class="btn btn-success" value= "edit" data-toggle="modal" data-target="#edit_{{ item[0] }}" >edit</button><br>
+                                <div id="edit_{{ item[0] }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="trans_message" aria-hidden="true">
+                                <form action="{{ url_for('edit', type='bills') }}" method="post">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+	<input name="prod_id" placeholder="{{ item[0] }}" >
+	<input name="item_name" placeholder="{{ item[1] }}"> 
+                                                <input name="qty" placeholder="{{ item[2] }}" >
+                                                <input name="rate" placeholder="{{ item[3] }}" >
+                                                <input name="price" placeholder="{{ item[4] }}" >
+				    </div>
+                                            <div class="modal-footer">
+                                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <!-- Inserting data -->
+                <tr>
+                    <form action = "{{ url_for('bills' ,type='add_item_bill') }}" method = "POST" >
+                    <td>
+                        <input name= "prod_id" placeholder="Product ID" required autofocus>
+                    </td>
+                    <td>
+                        <input name= "item_name" placeholder="Item Name" required autofocus>
+                    </td>
+                    <td>
+                        <input name= "qty" placeholder="0" required autofocus>
+                    </td>
+                    <td>
+                        <input name= "rate" placeholder="&#8377;0.0" required autofocus>
+                    </td>
+                    <td>
+			    <input name= "price" placeholder="&#8377;0.0" required autofocus>
+                    </td>
+                    <td>
+                        <input type= "submit" class="btn btn-info btn-group-toggle" value= "submit" /><br>
+                    </td>
+                    </form>
+                </tr>
+            </tbody>
+        </table>
+                <form action = "{{ url_for('bills' ,type='save') }}" method = "post" >
+	Client Name: <input name="client_name" placeholder="Client Name" > 
+	Client Number: <input name="client_number" placeholder="Client Mobile No." > 
+	Total: <input type="text" value=&#8377;{{total}} style='margin-right:16px' >
+        <input type= "submit" name="button-type" style='margin-right:16px' class="btn btn-info btn-group-toggle" value= "Save">
+	<input type= "submit" style='margin-right:16px' class="btn btn-info btn-group-toggle" name = "button-type"" value= "print" /><br>
+	</form>
+    </div>
+{%endif%}
+ {% endblock %}
